@@ -28,24 +28,24 @@ hexo有两个地方可以存着站内资源，这里的资源包括图片、视�
     * /uploads/xxx.jpg，需要将图片资源保存在hexo/source/uploads目录下（新建uploads)
     * /images/xxx.jpg，需要将图片资源保存在hexo/source/images目录下，也可以保存在主题的source目录，道理一样的。
     * xxx.jpg，这种存在于文章的同级同名目录之下，需要打开hexo的配置并安装一个插件。
-    ``` shell
-    npm install https://github.com/CodeFalling/hexo-asset-image –save
-    再把 hexo _config.yml 中更改 post_asset_folder:true
-    ```
+``` shell
+npm install https://github.com/CodeFalling/hexo-asset-image –save
+再把 hexo _config.yml 中更改 post_asset_folder:true
+```
 最后，很多人使用了图床，这极大地方便着博客markdown的迁移，可以使我们的文章到处渲染。当然，我目前还没使用图床。
 
 参考资源：https://www.tuicool.com/articles/umEBVfI
 
 ## 主题配置
 个人使用的Next主题，安装方法见Next主题官网。安装后把Next主题的\_config.yml配置复制一份到hexo/source/\_data/next.yml，后续就修改这个文件即可。
-``` shell
+```shell
 cp themes/next/_config.yml source/_data/next.yml
 ```
 Next主题由于我打开了fancybox特效，因此需要安装fancybox主题插件。
 在主题themes/next目录下
-``` shell
+```shell
 git clone https://github.com/theme-next/theme-next-fancybox3 source/lib/fancybox
-``` 
+```
 
 参考资料：
 Next主题配置文档：https://github.com/iissnan/hexo-theme-next/wiki/%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83
