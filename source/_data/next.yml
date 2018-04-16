@@ -778,7 +778,7 @@ motion:
 # Please, choose only any one variant, do not need to install both.
 # For install 2.x: https://github.com/theme-next/theme-next-fancybox
 # For install 3.x: https://github.com/theme-next/theme-next-fancybox3
-fancybox: true
+fancybox: false
 
 # Added switch option for separated repo in 6.0.0.
 # Dependencies: https://github.com/theme-next/theme-next-fastclick
@@ -935,6 +935,9 @@ vendors:
   # https://github.com/theme-next/theme-next-reading-progress
   # Example: https://cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js
   reading_progress:
+    enable: true
+    color: "#37c6c0"
+    height: 2px
 
   # valine comment
   # Example: https://cdn.jsdelivr.net/npm/valine@1.1.8/dist/Valine.min.js
