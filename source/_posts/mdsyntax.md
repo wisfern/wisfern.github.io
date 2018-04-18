@@ -5,7 +5,7 @@ categories: docs
 tags: Markdown docs
 excerpt: Markdown 语法说明 (简体中文版)
 abbrlink: 78e09c9c
-date: 2015-09-22 16:00:00
+date: 2018-02-22 16:00:00
 ---
 
 ## Markdown 语法说明 (简体中文版)
