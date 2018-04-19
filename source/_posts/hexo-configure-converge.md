@@ -32,12 +32,41 @@ hexo有两个地方可以存着站内资源，这里的资源包括图片、视�
 
 ```shell
 # 由于CodeFalling改的hexo-asset-image与hexo-abbrlink不兼容，生成的图片链接无法成功显示，因此换成我自己修改的版本
-npm install https://github.com/wisfern/hexo-asset-image –save
+npm install https://github.com/wisfern/hexo-asset-image --save
 再把 hexo _config.yml 中更改 post_asset_folder:true
 ```
 最后，很多人使用了图床，这极大地方便着博客markdown的迁移，可以使我们的文章到处渲染。当然，我目前还没使用图床。
 
 参考资源：https://www.tuicool.com/articles/umEBVfI
+
+### VS Code使用图片插件
+
+曾经有一段时间是在vscode这个开源的编辑器下写博文，因为这个编辑器通过第三方插件可以实现相当丰富的功能，其中就包含Markdown预览，复制图片，以及hexo博客的支持。
+
+vscode的图片插件使用Paste Image，这个插件直接截图保存在指定的目录，我们可以配置为当前文章所在的目录的文章同名子目录，是不是很熟悉。
+
+插件配置
+
+```
+{
+    "pasteImage.path": "${currentFileDir}/${currentFileNameWithoutExt}"
+}
+```
+
+指定图片存放位置为：当前文件所在目录，以当前文件名命名的子目录。
+
+url默认为以当前文件名命名的目录。
+
+保存的时候，可以选择一段自定义文字，然后再按`ctrl+alt+v`复制进markdown，作为图片文件名，效果如下：
+
+```markdown
+复制后的markdown文字
+![](hexo-configure-converge/2018-04-19-14-24-59.png)
+```
+
+效果
+![](hexo-configure-converge/2018-04-19-14-24-59.png)
+
 
 ## 主题配置
 个人使用的Next主题，安装方法见Next主题官网。安装后把Next主题的\_config.yml配置复制一份到hexo/source/\_data/next.yml，后续就修改这个文件即可。
