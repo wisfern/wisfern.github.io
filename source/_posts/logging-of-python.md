@@ -1,6 +1,6 @@
 ---
 title: python之logging
-categories: [Develop, Python]
+categories: [develop, python]
 tags: 
   - python
   - logging

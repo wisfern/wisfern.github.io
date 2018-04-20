@@ -1,10 +1,13 @@
 ---
 title: 内网穿透之zerotier
-date: 2018-04-20 09:33:30
-categories: [Tools, zt]
+categories:
+  - tools
+  - zt
 tags:
   - zerotier
   - p2p
+abbrlink: 3207f237
+date: 2018-04-20 09:33:30
 description:
 ---
 

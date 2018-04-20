@@ -1,7 +1,7 @@
 ---
 title: Docker容器下部署Ubuntu远程桌面
 categories:
-  - Docker
+  - docker
   - xrdp
 tags:
   - docker

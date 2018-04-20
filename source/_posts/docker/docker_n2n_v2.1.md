@@ -1,12 +1,15 @@
 ---
 title: Docker部署之n2n
-date: 2018-04-20 21:39:05
-categories: [Docker, n2n]
+categories:
+  - docker
+  - n2n
 tags:
   - docker
   - n2n
   - p2p
   - tools
+abbrlink: b75b53c3
+date: 2018-04-20 21:39:05
 description:
 ---
 

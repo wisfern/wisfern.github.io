@@ -1,6 +1,6 @@
 ---
 title: Hexo配置与使用集锦
-categories: Hexo
+categories: [docs, hexo]
 tags:
   - hexo
   - configure

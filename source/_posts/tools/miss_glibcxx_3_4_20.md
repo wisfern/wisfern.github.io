@@ -1,12 +1,15 @@
 ---
 title: 缺失GLIBCXX_3.4.20版本问题解决
-categories: [tools, gcc]
+categories:
+  - tools
+  - gcc
 tags:
   - zerotier-one
   - gcc
   - linux
-description: 
+abbrlink: cb3d02d8
 date: 2018-04-20 12:29:52
+description:
 ---
 
 使用自行编译的gcc 4.9.4去编译zerotier-one 1.2.6 成功后，却运行不起来，发生了错误
