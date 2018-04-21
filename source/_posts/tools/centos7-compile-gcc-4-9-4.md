@@ -1,17 +1,21 @@
 ---
-title: 内网穿透之zerotier
+title: Linux之编译gcc 4.9.4
 categories:
   - tools
-  - zt
+  - gcc
 tags:
-  - zerotier
-  - p2p
+  - centos
+  - gcc
+  - json
+  - zerotier  
 abbrlink: 3207f237
 date: 2018-04-20 09:33:30
 description:
 ---
 
 为了编译zerotier-one 1.2.6版本，而这个版本所依赖的json解析库要求的gcc编译器至少要在4.9以上，而centos 7自带的编译器才4.8.5，因此有了这一篇文章。
+
+<!-- more -->
 
 # 源代码下载
 ```shell

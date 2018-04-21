@@ -211,7 +211,7 @@ $ ip addr
    iptables -t nat -A POSTROUTING -j MASQUERADE &
    iptables -I INPUT -i XXX -j ACCEPT
    ```
-   Linux 路由的配置
+   [Linux 路由的配置](archives/d34856fa.html)
    ```
    route add -net 192.168.11.0/24 gw 10.0.0.11 &
    帮助参考
