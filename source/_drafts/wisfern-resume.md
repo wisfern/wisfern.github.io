@@ -1,9 +1,10 @@
 ---
 title: 个人简历
-tags: []
-categories: []
+tags: 
+  - resume
+categories: docs
 abbrlink: e860cc2d
-date: 2018-04-11 17:32:00
+date: 2017-04-11 17:32:00
 ---
 <!-- img src="/uploads/headshot.jpg" style="float:right"  width="20%" -->
 
