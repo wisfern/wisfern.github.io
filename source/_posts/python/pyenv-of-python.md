@@ -16,8 +16,34 @@ description:
 # 序言
 
 在nodejs中用过一个工具叫nvm（nodejs version manager）,可以下载安装切换删除多个版本的nodejs，很方便代码编写与测试。再加上很好用的npm或者yarn，就构成了javascript的执行器版本和包管理的全部。
-那么在python的世界，是否也有同样的两个工具呢，还别说，真有。那就是pyenv和pyvenv。
+那么在python的世界，是否也有同样的两个工具呢，还别说，真有。那就是pyenv和pyvenv，以及2016年出来的pipenv。
 <!-- more -->
+
+pyenv：python版本管理器
+
+pipenv：python依赖管理器，比pip更先进
+
+pyvenv：python虚拟环境管理器
+
+> update1: 新增pipenv，功能类似于nodejs的`npm` & `yarn`推荐用这个工具。
+
+# pipenv
+
+这是python更好的包依赖管理器，功能类似于nodejs的`npm`，关于它的起源可以见[A Better Pip Workflow™](https://www.kennethreitz.org/essays/a-better-pip-workflow)。
+
+暂时先记录如下几个命令，更多的功能等后续使用后再来更新些文。
+
+```shell
+pipenv --venv           # 查看 venv 位置
+pipenv --python 3.6.5   # 使用python 3.6.5创建新的项目
+pipenv --three / --two  # 使用python3或者python2创建virtualenv
+pipenv install --dev    # 为项目安装所有的包，包含dev依赖
+pipenv graph            # 查看本项目的依赖图
+pipenv shell
+exit                    #退出 pipenv shell
+```
+
+更多的功能，尽情地`pipenv -h`。
 
 # pyenv
 
@@ -123,6 +149,21 @@ $ pyenv shell python版本 切换当前 shell 中的 python 版本
 
 - 使用 pyenv uninstall ... 命令。
 - 直接删除 versions 文件夹下的对应 python 版本文件夹。
+
+## 自动切换
+
+为目录指定相应的虚拟版本，可以在此目录的根目录上面写一个文件`.python-version` ，把versions命令显示出来的一个环境版本写进去，然后下次cd进去这个目录就会自动激活相应的版本。
+
+```shell
+# devis @ kali in ~ [13:09:26] 
+$ cd Tensorflow 
+(tensorflow2.7) 
+# devis @ kali in ~/Tensorflow [14:55:18] 
+$ cd ../Tensorflow3 
+(tensorflow3.6) 
+# devis @ kali in ~/Tensorflow3 [14:57:33] 
+$
+```
 
 # pyvenv & virtualenv
 
