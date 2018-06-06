@@ -18,6 +18,7 @@ before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
   - npm install -g hexo-cli
+  - git clone https://github.com/theme-next/theme-next-fancybox3 themes/next/source/lib/fancybox
 
 install:
   - yarn
