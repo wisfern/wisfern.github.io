@@ -125,7 +125,7 @@ Chrome浏览器的F12调试功能有提供页面cpu分析使用的火焰图。
 # 案例结果
 <!-- 默认的![]()图片标签无法正常地显示svg，显示结果无法进行缩放和选择，改为embed标签并加大小 -->
 <!-- embed width="700" src="/archives/9cec1625/perf-abs_format.svg" type="image/svg+xml"/></div -->
-单击可以放大看细节
+[单击](/archives/9cec1625/perf-abs_format.svg)可以放大看细节
 [![abs_format的on-cpu火焰图](perf-abs_format.svg)](9cec1625/perf-abs_format.svg)
 
 # 参考资料
