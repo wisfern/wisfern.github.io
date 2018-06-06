@@ -118,6 +118,7 @@ Chrome浏览器的F12调试功能有提供页面cpu分析使用的火焰图。
 
 - [使用火焰图分析CPU性能回退问题](https://linux.cn/article-4670-1.html)。
 - 分析Java程序的cpu占用效率，则可以参考[java in flame](http://colobu.com/2016/08/10/Java-Flame-Graphs/)。
+- [分析Node程序的火焰图工具](https://github.com/mapbox/flamebearer)
 - off-cpu分析，请参考[Linux eBPF Off-CPU Flame Graph](http://www.brendangregg.com/blog/2016-01-20/ebpf-offcpu-flame-graph.html)，这个需要安装[bcc](https://github.com/iovisor/bcc)工具，[Linux perf_events Off-CPU Time Flame Graph](http://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html)，博主建议使用eBPF来做这个Off-CPU分析，这个工具从linux 4.6之后才可以使用。暂时没有精力去研究。
 - 另外，[openresty/nginx-systemtap-toolkit](https://github.com/openresty/nginx-systemtap-toolkit)提供了一些性能分析工具，而且这些工具也可以应用于其他进程，所以也可以多多参考这个库里面的脚本。
 
