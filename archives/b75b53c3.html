@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="n2n是在数据链路层实现的一套P2P协议，包括super node 和 edge node。之前一直使用zerotier-one进行穿透，只是最近一直穿透不成功，因此就想试试n2n如何，这个n2n跟zerotier-one一样，可以实现把分布在全球各地的计算机穿透防火墙连接成一个局域网，这样可以把家里、公司等等的设备连接起来，达到互相访问的效果（局域网的体验）。">
+<meta name="keywords" content="docker,tools,n2n,p2p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker部署之n2n">
+<meta property="og:url" content="http://www.xiezhifeng.cn/archives/b75b53c3.html">
+<meta property="og:site_name" content="自留地">
+<meta property="og:description" content="n2n是在数据链路层实现的一套P2P协议，包括super node 和 edge node。之前一直使用zerotier-one进行穿透，只是最近一直穿透不成功，因此就想试试n2n如何，这个n2n跟zerotier-one一样，可以实现把分布在全球各地的计算机穿透防火墙连接成一个局域网，这样可以把家里、公司等等的设备连接起来，达到互相访问的效果（局域网的体验）。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-0e1314e129d9c529ef7e08d4b5eb147d_hd.jpg">
+<meta property="og:updated_time" content="2018-07-23T13:48:51.663Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker部署之n2n">
+<meta name="twitter:description" content="n2n是在数据链路层实现的一套P2P协议，包括super node 和 edge node。之前一直使用zerotier-one进行穿透，只是最近一直穿透不成功，因此就想试试n2n如何，这个n2n跟zerotier-one一样，可以实现把分布在全球各地的计算机穿透防火墙连接成一个局域网，这样可以把家里、公司等等的设备连接起来，达到互相访问的效果（局域网的体验）。">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-0e1314e129d9c529ef7e08d4b5eb147d_hd.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.xiezhifeng.cn/archives/b75b53c3.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Docker部署之n2n | 自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.xiezhifeng.cn/archives/b75b53c3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhifeng xie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Docker部署之n2n</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T21:39:05+00:00">2018-04-20</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/n2n/" itemprop="url" rel="index"><span itemprop="name">n2n</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>n2n是在数据链路层实现的一套P2P协议，包括super node 和 edge node。之前一直使用zerotier-one进行穿透，只是最近一直穿透不成功，因此就想试试n2n如何，这个n2n跟zerotier-one一样，可以实现把分布在全球各地的计算机穿透防火墙连接成一个局域网，这样可以把家里、公司等等的设备连接起来，达到互相访问的效果（局域网的体验）。</p>
+<a id="more"></a>
+<p><img src="https://pic1.zhimg.com/80/v2-0e1314e129d9c529ef7e08d4b5eb147d_hd.jpg" alt="img"></p>
+<p>具体原理可以参看作者的论文<a href="http://www.n2n.org.cn/doc/n2n.pdf" target="_blank" rel="noopener">http://www.n2n.org.cn/doc/n2n.pdf</a>。而且最重要的是n2n是开源的，遵循GPL v3协议，可运行于Linux，Windows，Android，甚至是Openwrt之上。</p>
+<p>在公司和家里研究了一天，编译、配置、部署，问题解决等，真是无语。</p>
+<h1 id="原生系统"><a href="#原生系统" class="headerlink" title="原生系统"></a>原生系统</h1><ul>
+<li><p>搭建super node：搭建super node需要公网IP，但好在搭建super node 并不是必须的，我们也可以使用<a href="http://www.lucktu.com/archives/749.html" target="_blank" rel="noopener">公用的super node</a>，且不用担心使用公用super node 的安全性问题，因为两个edge的通信数据并不经过super node，具体原理参看论文及源码。</p>
+</li>
+<li><p>原版的n2n作者已经没有在维护，好在软件开源。全世界还有人在不断地维护着n2n，我在github上面找到一个维护得比较新的版本[<a href="https://github.com/meyerd/n2n.git" target="_blank" rel="noopener">github仓库</a>]，这个版本修改了V2，不同的是这里的V2为V2.1，大幅修改了n2n协议，不再与之前的n2n兼容，作者目的为了n2n v3做准备，也许不久的将来可以看到n2n v3的出现。</p>
+</li>
+</ul>
+<h2 id="n2n-v2-1编译过程"><a href="#n2n-v2-1编译过程" class="headerlink" title="n2n v2.1编译过程"></a>n2n v2.1编译过程</h2><p>实验环境为ubuntu 18.04 LTS</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install git build-essential libssl-dev</span><br><span class="line">$ git clone https://github.com/meyerd/n2n.git</span><br><span class="line">$ cd n2n/n2n_v2</span><br><span class="line">$ mkdir build</span><br><span class="line">$ cd build</span><br><span class="line">$ cmake ..</span><br><span class="line">$ make</span><br><span class="line">$ sudo make install</span><br><span class="line">$ supernode -l 2053 -f</span><br></pre></td></tr></table></figure>
+<p>  然后也可以在super node的服务器上建立 edge node，命令格式如下：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ edge -d [tun name] -a [Local_IP] -c [net name] -k [key] -u 1000 -g 100 -l [supernode IP]:[supernode port]</span><br></pre></td></tr></table></figure>
+<p>  <strong>所有同一个n2n网络的net name和key必须一样，这样才能连接在一起。</strong></p>
+<p>  一个实例：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ edge -d edge0 -a 10.9.9.1 -c wisfern_n2n2s -k 12345 -u 1000 -g 100 -l n2n.lucktu.com:10088 -r</span><br></pre></td></tr></table></figure>
+<h2 id="搭建启动命令"><a href="#搭建启动命令" class="headerlink" title="搭建启动命令"></a>搭建启动命令</h2><ul>
+<li><p>搭建edge node：搭建过程与super node相同，只是最后启动edge node时配置好自己的IP就行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ edge -d edge1 -a 10.9.9.10 -c wisfern_n2n2s -k 12345 -u 1000 -g 100 -l n2n.lucktu.com:10088 -r</span><br><span class="line">$ ifconfig</span><br></pre></td></tr></table></figure>
+<p>此时在此电脑上应该会看到类似下面的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">edge1     Link encap:以太网  硬件地址 xx:xx:xx:xx:xx:xx  </span><br><span class="line">          inet 地址:10.0.0.10  广播:10.0.0.255  掩码:255.255.255.0</span><br><span class="line">          inet6 地址: xxxx::xxxx:xxxx:xxxx:xxxx/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1400  跃点数:1</span><br><span class="line">          接收数据包:0 错误:0 丢弃:0 过载:0 帧数:0</span><br><span class="line">          发送数据包:38 错误:0 丢弃:0 过载:0 载波:0</span><br><span class="line">          碰撞:0 发送队列长度:1000 </span><br><span class="line">          接收字节:0 (0.0 B)  发送字节:6463 (6.4 KB)</span><br></pre></td></tr></table></figure>
+<p>此时可以在edge所在的电脑上 ping 10.0.0.1 , 测试连通性。</p>
+<p>​</p>
+</li>
+<li><p>搭建其他edge node ：方法同上，注意配置不同的ip。然后edge间就可以没羞没躁地穿透层层NAT愉快地玩耍啦。</p>
+</li>
+</ul>
+<h2 id="服务化"><a href="#服务化" class="headerlink" title="服务化"></a>服务化</h2><p>为了在linux上常驻，可以借助systemd或者supervisord，记录一下systemd的服务化过程。</p>
+<p>编译好后的edge复制到/opt/edge，然后编写n2n.service文件。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cat &gt; /opt/n2n.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=n2n2s daemon</span><br><span class="line">After=rc-local.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line">WorkingDirectory=/tmp</span><br><span class="line">ExecStart=/opt/edge -d n2n0 -a 10.9.9.176 -c wisfern_n2n2s -k 12345 -l n2n.lucktu.com:10088 -r -f</span><br><span class="line">Restart=always</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>编写完成之后，部署到<code>cp /opt/n2n.service /etc/systemd/system/</code>，然后运行命令初始化和启动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl daemon-reload</span><br><span class="line"># systemctl start n2n</span><br><span class="line"># systemctl status n2n</span><br><span class="line"># systemctl logs -f n2n</span><br></pre></td></tr></table></figure>
+<p>后续有精力再弄成deb包。</p>
+<h1 id="Docker容器"><a href="#Docker容器" class="headerlink" title="Docker容器"></a>Docker容器</h1><p>用docker的话，也有套路，找个位置记录下。</p>
+<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">MAINTAINER</span> &lt;wisfern@qq.com&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> DEBIAN_FRONTEND=noninteractive</span><br><span class="line"><span class="keyword">RUN</span> apt-get -y update \</span><br><span class="line">    &amp;&amp; apt-get -yy upgrade \</span><br><span class="line">    &amp;&amp; apt-get install -y git cmake make gcc g++ libssl-dev net-tools iproute2 \</span><br><span class="line">    &amp;&amp; git clone https://github.com/meyerd/n2n.git \</span><br><span class="line">    &amp;&amp; cd n2n/n2n_v2 \</span><br><span class="line">    &amp;&amp; mkdir build; cd build \</span><br><span class="line">    &amp;&amp; cmake .. \</span><br><span class="line">    &amp;&amp; make; make install \</span><br><span class="line">    &amp;&amp; cd ~; rm -rf n2n \</span><br><span class="line">    &amp;&amp; apt-get -yy autoremove git cmake make gcc g++ libssl-dev \</span><br><span class="line">    &amp;&amp; apt-get -yy autoclean \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span><br></pre></td></tr></table></figure>
+<h2 id="镜像构建"><a href="#镜像构建" class="headerlink" title="镜像构建"></a>镜像构建</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -t docker_n2n:v2.1 .</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意后面的.(点)，表示当前目录。</p>
+<p>构建完之后，可以把镜像推送到云容器镜像服务站（自行解决）。</p>
+</blockquote>
+<h2 id="启动方法"><a href="#启动方法" class="headerlink" title="启动方法"></a>启动方法</h2><p>edge节点</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 1st edge node</span><br><span class="line">docker run -d --privileged --restart=always --name=edge2s --net=host docker_n2n:v2.1 edge -d n2n0 -a 10.9.9.213 -c wisfern_n2n2s -k 12345 -l n2n.lucktu.com:10088 -f</span><br><span class="line"># 2nd edge node</span><br><span class="line">docker run -d --privileged --restart=always --name=edge2s --net=host docker_n2n:v2.1 edge -d n2n0 -a 10.9.9.120 -c wisfern_n2n2s -k 12345 -l n2n.lucktu.com:10088 -f</span><br><span class="line"></span><br><span class="line"># supernode, have public ip</span><br><span class="line">docker run -d --restart=always --name=supernode2s --net=host -p 2053/udp docker_n2n:v2.1 supernode -l 2053 -f</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>每个edge节点，-a后面的ip地址都不同，代表不同的本地网卡ip地址。-f表示前端输出。-r 表示数据转发。</p>
+<p>超级节点必须部署在有公网的计算机上，并且放开 -l 后面指定的udp端口。</p>
+</blockquote>
+<p>docker 容器</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker ps </span><br><span class="line">[sudo] devis 的密码：</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES</span><br><span class="line">7170e9de9c98        docker_n2n:v2.1     &quot;edge -d n2n0 -a 1...&quot;   5 hours ago         Up 5 hours                              edge2s</span><br></pre></td></tr></table></figure>
+<p>网络信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ip addr</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">55: n2n0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1400 qdisc pfifo_fast state UNKNOWN group default qlen 1000</span><br><span class="line">    link/ether fa:00:e7:00:00:64 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.9.9.213/24 brd 10.9.9.255 scope global n2n0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::0000:e7ff:0000:8364/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h1 id="可能问题"><a href="#可能问题" class="headerlink" title="可能问题"></a>可能问题</h1><ol>
+<li><p>连接后，ping得edge节点，但ping不通edge节点后面的内网机器。这里有两种可能的原因，一个是本机路由没有配置正确，第二个是防火墙和NAT转发没有配置正确。防火墙主要加入这样的两句到防火墙里面去。其中XXX是在edge后面带 -d 参数设置的网卡名。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -j MASQUERADE &amp;</span><br><span class="line">iptables -I INPUT -i XXX -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p><a href="archives/d34856fa.html">Linux 路由的配置</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">route add -net 192.168.11.0/24 gw 10.0.0.11 &amp;</span><br><span class="line">帮助参考</span><br><span class="line">$ sudo route add</span><br><span class="line">Usage: inet_route [-vF] del &#123;-host|-net&#125; Target[/prefix] [gw Gw] [metric M] [[dev] If]</span><br><span class="line">    inet_route [-vF] add &#123;-host|-net&#125; Target[/prefix] [gw Gw] [metric M]</span><br><span class="line">                           [netmask N] [mss Mss] [window W] [irtt I]</span><br><span class="line">                           [mod] [dyn] [reinstate] [[dev] If]</span><br><span class="line">    inet_route [-vF] add &#123;-host|-net&#125; Target[/prefix] [metric M] reject</span><br><span class="line">    inet_route [-FC] flush      NOT supported</span><br></pre></td></tr></table></figure>
+<p>windows路由的添加有些不同，原理一样。</p>
+</li>
+<li><p>怎么设置 supernode 为我所独用？</p>
+<p>假设自己使用的 n2n 是这样运行的（以n2nabc 账号）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">edge -d edge0 -c n2nabc-k pwd -a 10.10.10.1 -l ip:10082</span><br></pre></td></tr></table></figure>
+<p>那么在 supernode 服务器上增加一条防火墙，监视 10082端口通过的字符串，只准账号中含有 n2nabc 字符的通过即可。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">iptables -I INPUT 1 -pudp --dport 10082 -m string ! --string &quot;n2nabc&quot; --algo bm -jDROP</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhifeng xie</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://www.xiezhifeng.cn/archives/b75b53c3.html" title="Docker部署之n2n">http://www.xiezhifeng.cn/archives/b75b53c3.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/tools/" rel="tag"># tools</a>
+          
+            <a href="/tags/n2n/" rel="tag"># n2n</a>
+          
+            <a href="/tags/p2p/" rel="tag"># p2p</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/cb3d02d8.html" rel="next" title="缺失GLIBCXX_3.4.20版本问题解决">
+                <i class="fa fa-chevron-left"></i> 缺失GLIBCXX_3.4.20版本问题解决
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/archives/877df9ff.html" rel="prev" title="ScreenToGif动态截图神器">
+                ScreenToGif动态截图神器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zhifeng xie</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">40</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/wisfern" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wisfern@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank" rel="external nofollow">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原生系统"><span class="nav-number">1.</span> <span class="nav-text">原生系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#n2n-v2-1编译过程"><span class="nav-number">1.1.</span> <span class="nav-text">n2n v2.1编译过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建启动命令"><span class="nav-number">1.2.</span> <span class="nav-text">搭建启动命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务化"><span class="nav-number">1.3.</span> <span class="nav-text">服务化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker容器"><span class="nav-number">2.</span> <span class="nav-text">Docker容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dockerfile"><span class="nav-number">2.1.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#镜像构建"><span class="nav-number">2.2.</span> <span class="nav-text">镜像构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动方法"><span class="nav-number">2.3.</span> <span class="nav-text">启动方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可能问题"><span class="nav-number">3.</span> <span class="nav-text">可能问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhifeng xie</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=6.0.6"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=6.0.6"></script>
+
+
+  
+
+  
+
+</body>
+</html>

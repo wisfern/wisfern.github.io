@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="一直以来都想要实现一种个人工作环境保存方式，试过备份，试过dotfiles，试过github等等方式。docker的出现提供了一种新的方法，Docker改变了世界的开发部署运维方式，改变了传统计算的方方面面。Doeckfile中集中着日常开发所使用的软件，借助xrdp组件，实现了docker下的远程桌面部署，得以实现一个即开即用的开发桌面。">
+<meta name="keywords" content="linux,docker,xrdp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker容器下部署Ubuntu远程桌面">
+<meta property="og:url" content="http://www.xiezhifeng.cn/archives/9a69055d.html">
+<meta property="og:site_name" content="自留地">
+<meta property="og:description" content="一直以来都想要实现一种个人工作环境保存方式，试过备份，试过dotfiles，试过github等等方式。docker的出现提供了一种新的方法，Docker改变了世界的开发部署运维方式，改变了传统计算的方方面面。Doeckfile中集中着日常开发所使用的软件，借助xrdp组件，实现了docker下的远程桌面部署，得以实现一个即开即用的开发桌面。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/9a69055d/screenshot.png">
+<meta property="og:updated_time" content="2018-07-23T13:48:51.663Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker容器下部署Ubuntu远程桌面">
+<meta name="twitter:description" content="一直以来都想要实现一种个人工作环境保存方式，试过备份，试过dotfiles，试过github等等方式。docker的出现提供了一种新的方法，Docker改变了世界的开发部署运维方式，改变了传统计算的方方面面。Doeckfile中集中着日常开发所使用的软件，借助xrdp组件，实现了docker下的远程桌面部署，得以实现一个即开即用的开发桌面。">
+<meta name="twitter:image" content="http://www.xiezhifeng.cn/archives/9a69055d/screenshot.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.xiezhifeng.cn/archives/9a69055d.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Docker容器下部署Ubuntu远程桌面 | 自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.xiezhifeng.cn/archives/9a69055d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhifeng xie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Docker容器下部署Ubuntu远程桌面</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T16:04:06+00:00">2018-04-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/docker/xrdp/" itemprop="url" rel="index"><span itemprop="name">xrdp</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一直以来都想要实现一种个人工作环境保存方式，试过备份，试过dotfiles，试过github等等方式。docker的出现提供了一种新的方法，Docker改变了世界的开发部署运维方式，改变了传统计算的方方面面。Doeckfile中集中着日常开发所使用的软件，借助xrdp组件，实现了docker下的远程桌面部署，得以实现一个即开即用的开发桌面。</p>
+<a id="more"></a>
+<hr>
+<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
+<li>root或者docker组权限</li>
+<li>docker 1.12版本以上，太低的版本我也没环境</li>
+</ul>
+<h1 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h1><p>这个docker容易使用的是Ubuntu 16.04，没有syslog，没有cron，没有日志归集压缩等功能，如果想要这些功能，可以From <a href="https://github.com/phusion/baseimage-docker" target="_blank" rel="noopener">phusion/baseimage</a>，这个image不到100M。</p>
+<p>我的<a href="https://github.com/wisfern/docker-ubuntu-xrdp-destop.git" target="_blank" rel="noopener">Dockerfile github 仓库</a></p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">16.04</span></span><br><span class="line"><span class="keyword">MAINTAINER</span> wisfern@gmail.com</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span> sed -i 's#http://archive.ubuntu.com/#http://mirrors.aliyun.com/#;s#http://security.ubuntu.com/#http://mirrors.aliyun.com/#;s/# deb-src/deb-src/g' /etc/apt/sources.list</span><br><span class="line"></span><br><span class="line"># Install packages</span><br><span class="line">ENV DEBIAN_FRONTEND noninteractive</span><br><span class="line">ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \</span><br><span class="line">    libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \</span><br><span class="line">    bison libxml2-dev dpkg-dev libcap-dev"</span><br><span class="line">RUN apt-get -y update \</span><br><span class="line">    &amp;&amp; apt-get -yy upgrade \</span><br><span class="line">    &amp;&amp; apt-get -yy install \ </span><br><span class="line">        apt-utils software-properties-common ca-certificates \</span><br><span class="line">        xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \</span><br><span class="line">        xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \</span><br><span class="line">        xfce4-xkb-plugin xauth uuid-runtime pulseaudio locales pepperflashplugin-nonfree \</span><br><span class="line">        sudo git wget make cmake vim zsh curl net-tools inetutils-ping \</span><br><span class="line">        firefox supervisor openssh-server nginx firefox-locale-zh-hant \</span><br><span class="line">        language-pack-zh-hant language-pack-gnome-zh-hant ttf-ubuntu-font-family \</span><br><span class="line">        fonts-wqy-microhei python-pip python-dev build-essential \</span><br><span class="line">        $BUILD_DEPS \</span><br><span class="line">    &amp;&amp; apt-get autoclean \</span><br><span class="line">    &amp;&amp; apt-get autoremove \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/* \</span><br><span class="line"></span><br><span class="line"># Build rdkafka</span><br><span class="line"></span><br><span class="line">WORKDIR /tmp</span><br><span class="line">RUN git clone https://github.com/edenhill/librdkafka.git \</span><br><span class="line">    &amp;&amp; cd librdkafka \</span><br><span class="line">    &amp;&amp; ./configure \</span><br><span class="line">    &amp;&amp; make \</span><br><span class="line">    &amp;&amp; make install </span><br><span class="line"></span><br><span class="line"># Build xrdp</span><br><span class="line"></span><br><span class="line">WORKDIR /tmp</span><br><span class="line">RUN apt-get source pulseaudio \</span><br><span class="line">    &amp;&amp; apt-get build-dep -yy pulseaudio \</span><br><span class="line">    &amp;&amp; cd /tmp/pulseaudio-8.0 \</span><br><span class="line">    &amp;&amp; dpkg-buildpackage -rfakeroot -uc -b \</span><br><span class="line">    &amp;&amp; cd /tmp \</span><br><span class="line">    &amp;&amp; git clone --branch v0.9.5 --recursive https://github.com/neutrinolabs/xrdp.git \</span><br><span class="line">    &amp;&amp; cd /tmp/xrdp \</span><br><span class="line">    &amp;&amp; ./bootstrap \</span><br><span class="line">    &amp;&amp; ./configure \</span><br><span class="line">    &amp;&amp; make \</span><br><span class="line">    &amp;&amp; make install \</span><br><span class="line">    &amp;&amp; cd /tmp/xrdp/sesman/chansrv/pulse \</span><br><span class="line">    &amp;&amp; sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-8\.0/g" Makefile \</span><br><span class="line">    &amp;&amp; make \</span><br><span class="line">    &amp;&amp; cp *.so /usr/lib/pulse-8.0/modules/</span><br><span class="line"></span><br><span class="line"># Build xorgxrdp</span><br><span class="line"></span><br><span class="line">WORKDIR /tmp</span><br><span class="line">RUN apt-get -yy install xserver-xorg-dev \</span><br><span class="line">    &amp;&amp; git clone --branch v0.2.5 --recursive https://github.com/neutrinolabs/xorgxrdp.git \</span><br><span class="line">    &amp;&amp; cd /tmp/xorgxrdp \</span><br><span class="line">    &amp;&amp; ./bootstrap \</span><br><span class="line">    &amp;&amp; ./configure \</span><br><span class="line">    &amp;&amp; make \</span><br><span class="line">    &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Clean </span><br><span class="line"></span><br><span class="line">WORKDIR /</span><br><span class="line">RUN apt-get -yy remove xscreensaver \</span><br><span class="line">    &amp;&amp; apt-get -yy remove $BULD_DEPS \</span><br><span class="line">    &amp;&amp; apt-get -yy autoremove \</span><br><span class="line">    &amp;&amp; apt-get -yy autoclean \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/* \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/*</span><br><span class="line"></span><br><span class="line"># Configure</span><br><span class="line"></span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime &amp;&amp; echo $TZ &gt; /etc/timezone \</span><br><span class="line">    &amp;&amp; dpkg-reconfigure locales \</span><br><span class="line">    &amp;&amp; locale-gen zh_CN.UTF-8 \</span><br><span class="line">    &amp;&amp; systemd-machine-id-setup</span><br><span class="line">ENV LANG zh_CN.UTF-8</span><br><span class="line">ENV LANGUAGE zh_CN:zh</span><br><span class="line">ENV LC_ALL zh_CN.UTF-8</span><br><span class="line"></span><br><span class="line">ADD bin /usr/bin</span><br><span class="line">ADD etc /etc</span><br><span class="line">#ADD pulse /usr/lib/pulse-10.0/modules/</span><br><span class="line">RUN mkdir /var/run/dbus \</span><br><span class="line">    &amp;&amp; cp /etc/X11/xrdp/xorg.conf /etc/X11</span><br><span class="line">#RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config</span><br><span class="line">RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini</span><br><span class="line">    &amp;&amp; echo "xfce4-session" &gt; /etc/skel/.Xclients \</span><br><span class="line">    &amp;&amp; cp -r /etc/ssh /ssh_orig \</span><br><span class="line">    &amp;&amp; rm -rf /etc/ssh/* \</span><br><span class="line">    &amp;&amp; rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem \</span><br><span class="line">    &amp;&amp; useradd -m -d /home/guest -p guest guest --groups adm,sudo \</span><br><span class="line">    &amp;&amp; echo 'guest:docker' | chpasswd \</span><br><span class="line">    &amp;&amp; chsh -s /bin/zsh guest \</span><br><span class="line">    &amp;&amp; cd /opt &amp;&amp; git clone https://github.com/wisfern/dotfiles.git \</span><br><span class="line">    &amp;&amp; chmod -R o+w dotfiles &amp;&amp; cd dotfiles &amp;&amp; make zsh</span><br><span class="line"></span><br><span class="line"># Docker config</span><br><span class="line"></span><br><span class="line">VOLUME ["/etc/ssh","/home"]</span><br><span class="line">EXPOSE 3389 22 9001</span><br><span class="line"></span><br><span class="line">ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]</span><br><span class="line">CMD ["supervisord"]</span><br></pre></td></tr></table></figure>
+<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><p>登陆到docker权限的用户，docker级成员或者root，执行命令</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1. 检出仓库</span><br><span class="line">git clone https://github.com/wisfern/docker-ubuntu-xrdp-destop.git</span><br><span class="line">cd docker-ubuntu-xrdp-destop</span><br><span class="line"></span><br><span class="line">2. 构建镜像</span><br><span class="line">docker build -t wisfern/ubuntu-xrdp:v0.1.0 .</span><br><span class="line"></span><br><span class="line">3. 启动容器</span><br><span class="line">docker run -d \</span><br><span class="line">  --name uxrdp \</span><br><span class="line">  -p 6080:80 -p 13389:3389 -p 2222:22 -p 9001:9001 -p 4000:4000 \</span><br><span class="line">  -v /srv:/srv \</span><br><span class="line">  ubuntu-xrdp</span><br><span class="line">  </span><br><span class="line">4. 连接远程桌面</span><br><span class="line">rdp 172.16.xx.xx:13389</span><br><span class="line">用户名: guest</span><br><span class="line">密码: docker</span><br></pre></td></tr></table></figure>
+<p>命令中映射目录到容器里面，是个人习惯，可选动作。</p>
+<h1 id="效果截图"><a href="#效果截图" class="headerlink" title="效果截图"></a>效果截图</h1><p><img src="/archives/9a69055d/screenshot.png" alt="screenshot"></p>
+<h2 id="添加XFCE4截图功能"><a href="#添加XFCE4截图功能" class="headerlink" title="添加XFCE4截图功能"></a>添加XFCE4截图功能</h2><p>上面的截图正在添加截图功能，首先</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">apt-get install xfce4-screenshooter</span><br></pre></td></tr></table></figure>
+<p>然后在界面上的菜单路径</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Applications=&gt;Settings=&gt;Keyboard=&gt;Application Shortcuts</span><br></pre></td></tr></table></figure>
+<p>增加快捷键，输入xfce4-screenshooter，如上图，按下OK后会出现一个新的对话框，按下键盘右上方的PrintScreen即可。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
+<li><a href="https://github.com/fcwu/docker-ubuntu-vnc-desktop" target="_blank" rel="noopener">fcwu/docker-ubuntu-vnc-desktop</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhifeng xie</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://www.xiezhifeng.cn/archives/9a69055d.html" title="Docker容器下部署Ubuntu远程桌面">http://www.xiezhifeng.cn/archives/9a69055d.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/xrdp/" rel="tag"># xrdp</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/d34856fa.html" rel="next" title="Linux之route">
+                <i class="fa fa-chevron-left"></i> Linux之route
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/archives/3207f237.html" rel="prev" title="Linux之编译gcc 4.9.4">
+                Linux之编译gcc 4.9.4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zhifeng xie</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">40</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/wisfern" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wisfern@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank" rel="external nofollow">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#依赖"><span class="nav-number">1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile"><span class="nav-number">2.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用方法"><span class="nav-number">3.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#效果截图"><span class="nav-number">4.</span> <span class="nav-text">效果截图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加XFCE4截图功能"><span class="nav-number">4.1.</span> <span class="nav-text">添加XFCE4截图功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhifeng xie</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=6.0.6"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=6.0.6"></script>
+
+
+  
+
+  
+
+</body>
+</html>

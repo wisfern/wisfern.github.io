@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="TMUX 自定义配置TMUX 号称是文本处理的“三大神器”之一，不是没有理由的。最近工作上好多事情都要在服务器上处理，所以用 TMUX 特别频繁。 最近花了点时间自己配置了一下 TMUX，这里权当记录一下吧。">
+<meta name="keywords" content="tmux,tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tmux个人配置">
+<meta property="og:url" content="http://www.xiezhifeng.cn/archives/556ffe3c.html">
+<meta property="og:site_name" content="自留地">
+<meta property="og:description" content="TMUX 自定义配置TMUX 号称是文本处理的“三大神器”之一，不是没有理由的。最近工作上好多事情都要在服务器上处理，所以用 TMUX 特别频繁。 最近花了点时间自己配置了一下 TMUX，这里权当记录一下吧。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/556ffe3c/screenshot.png">
+<meta property="og:updated_time" content="2018-07-23T13:48:51.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tmux个人配置">
+<meta name="twitter:description" content="TMUX 自定义配置TMUX 号称是文本处理的“三大神器”之一，不是没有理由的。最近工作上好多事情都要在服务器上处理，所以用 TMUX 特别频繁。 最近花了点时间自己配置了一下 TMUX，这里权当记录一下吧。">
+<meta name="twitter:image" content="http://www.xiezhifeng.cn/archives/556ffe3c/screenshot.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.xiezhifeng.cn/archives/556ffe3c.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>tmux个人配置 | 自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.xiezhifeng.cn/archives/556ffe3c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhifeng xie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">tmux个人配置</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-31T14:23:08+00:00">2018-05-31</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/tmux/" itemprop="url" rel="index"><span itemprop="name">tmux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="TMUX-自定义配置"><a href="#TMUX-自定义配置" class="headerlink" title="TMUX 自定义配置"></a>TMUX 自定义配置</h1><p><img src="/archives/556ffe3c/screenshot.png" alt="screenshot"><br>TMUX 号称是文本处理的“三大神器”之一，不是没有理由的。最近工作上好多事情都要在服务器上处理，所以用 TMUX 特别频繁。</p>
+<p>最近花了点时间自己配置了一下 TMUX，这里权当记录一下吧。<br><a id="more"></a></p>
+<h2 id="1-自动加载配置文件"><a href="#1-自动加载配置文件" class="headerlink" title="1. 自动加载配置文件"></a>1. 自动加载配置文件</h2><p>在使用 TMUX 的时候，如果要重新加载配置文件，需要 <code>Ctrl + a</code> 触发，然后输入 <code>: + source-file + ~/.tmux.conf</code> 。</p>
+<p>因为在调试配置的时候需要反复尝试，所以把这个配置做成了快捷键 <code>Ctrl + a + R</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bind R source-file ~/.tmux.conf</span><br></pre></td></tr></table></figure>
+<h2 id="2-采用-Vi-模式的快捷键"><a href="#2-采用-Vi-模式的快捷键" class="headerlink" title="2. 采用 Vi 模式的快捷键"></a>2. 采用 Vi 模式的快捷键</h2><p>开启之后在复制模式（copy-mode，<code>Ctrl + a + ?</code>）中可以使用 Vi 模式下的快捷键。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">setw -g mode-keys vi</span><br></pre></td></tr></table></figure>
+<h2 id="3-鼠标支持"><a href="#3-鼠标支持" class="headerlink" title="3. 鼠标支持"></a>3. 鼠标支持</h2><p>对于鼠标的支持表现在通过鼠标的点击切换 window、pane 以及通过拖曳更改 pane 的大小。</p>
+<p>注意的是 TMUX 版本的不同设置方式也不同。我的 MacBook Pro 使用的是 2.1，而我经常登录的服务器上使用的是 1.6。查看 TMUX 版本的命令是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tmux -V</span><br></pre></td></tr></table></figure>
+<p>如果是 2.1 的话，设置为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set -g mouse on</span><br></pre></td></tr></table></figure>
+<p>如果是 1.6 的话则设置为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set -g mouse-select-window on</span><br><span class="line">set -g mouse-select-pane on</span><br><span class="line">set -g mouse-resize-pane on</span><br></pre></td></tr></table></figure>
+<h2 id="4-pane的快捷键"><a href="#4-pane的快捷键" class="headerlink" title="4. pane的快捷键"></a>4. <code>pane</code>的快捷键</h2><p>默认的设置中，<code>pane</code> 的切换的快捷键是 <code>Ctrl + a + 方向键</code>，为了更便捷地进行切换，定义了新的快捷键 <code>Alt + 方向键</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 切换为使用 Alt-方向键 切换同一 Window 中的pane，只是在CRT中貌似没有效果。</span><br><span class="line">bind -n M-Left select-pane -L</span><br><span class="line">bind -n M-Right select-pane -R</span><br><span class="line">bind -n M-Up select-pane -U</span><br><span class="line">bind -n M-Down select-pane -D</span><br></pre></td></tr></table></figure>
+<p>顺便把分屏快捷键改为<code>Ctrl + a + |</code>和<code>Ctrl + a + -</code>，很直观，一个竖分屏，一个是横分屏。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">unbind &apos;&quot;&apos;</span><br><span class="line">bind - splitw -v # 分割成上下两个窗口</span><br><span class="line">unbind %</span><br><span class="line">bind | splitw -h # 分割成左右两个窗口</span><br></pre></td></tr></table></figure>
+<h2 id="5-自定义状态栏"><a href="#5-自定义状态栏" class="headerlink" title="5. 自定义状态栏"></a>5. 自定义状态栏</h2><p>TMUX 可以自定义状态栏的颜色和展示信息。首先给出我暂时使用的配置：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自动重新编号 window</span><br><span class="line">set -g renumber-windows on</span><br><span class="line"></span><br><span class="line"># 设置自动刷新的时间间隔</span><br><span class="line">set -g status-interval 1</span><br><span class="line"># 状态栏左对齐</span><br><span class="line">set -g status-justify left</span><br><span class="line"># 状态栏左侧宽度</span><br><span class="line">set -g status-left-length 20</span><br><span class="line"># 状态栏右侧宽度</span><br><span class="line">set -g status-right-length 50</span><br><span class="line"></span><br><span class="line"># 状态栏右侧显示时间</span><br><span class="line">set -g status-right &apos;[#h] %Y-%m-%d %H:%M:%S&apos;</span><br><span class="line"># 用习惯了默认的状态栏，不修改其他了，只改了时间显示样式</span><br></pre></td></tr></table></figure>
+<p>有几个配置需要进行说明一下：</p>
+<h3 id="5-1-关于时间的配置"><a href="#5-1-关于时间的配置" class="headerlink" title="5.1 关于时间的配置"></a>5.1 关于时间的配置</h3><p>上文配置中，我采用了几个时间参数显示在了状态栏的右侧：</p>
+<table>
+<thead>
+<tr>
+<th>参数形式</th>
+<th>参数含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%Y</td>
+<td>年：2016</td>
+</tr>
+<tr>
+<td>%m</td>
+<td>月：07</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>日：03</td>
+</tr>
+<tr>
+<td>%H</td>
+<td>小时：02</td>
+</tr>
+<tr>
+<td>%M</td>
+<td>分钟：19</td>
+</tr>
+<tr>
+<td>%S</td>
+<td>秒：04</td>
+</tr>
+</tbody>
+</table>
+<p>需要注意的是其实这个时间的刷新是有间隔的，我们可以通过设置参数：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set -g status-interval 1</span><br></pre></td></tr></table></figure>
+<p>使得状态栏的时间好像每一秒都在变化。</p>
+<h3 id="5-2-颜色配置"><a href="#5-2-颜色配置" class="headerlink" title="5.2 颜色配置"></a>5.2 颜色配置</h3><p>TMUX 的状态栏中可以按照 <code>#[bg=colourxx,fg=#ffffff]</code> 的形式定义颜色的前景和背景。颜色的类型指定如：<strong>black</strong>, <strong>red</strong>, <strong>green</strong>, <strong>yellow</strong>, <strong>blue</strong>, <strong>magenta</strong>, <strong>cyan</strong>, <strong>white</strong> 。也可以是<strong>colour0</strong> 到 <strong>colour255</strong>。或者形如 <code>#ffffff</code> 的 RGB 格式。同时还可以针对字体进行设置：<strong>bright</strong> (or <strong>bold</strong>), <strong>dim</strong>, <strong>underscore</strong>, <strong>blink</strong>, <strong>reverse</strong>,<strong>hidden</strong>, or <strong>italics</strong>。</p>
+<p><code>#[default]</code> 可以重置修改后的样式。</p>
+<h3 id="5-3-其他配置参数"><a href="#5-3-其他配置参数" class="headerlink" title="5.3 其他配置参数"></a>5.3 其他配置参数</h3><table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#H</td>
+<td>完整主机名</td>
+</tr>
+<tr>
+<td>#h</td>
+<td>不含域名的主机名</td>
+</tr>
+<tr>
+<td>#F</td>
+<td>窗口的标记</td>
+</tr>
+<tr>
+<td>#S</td>
+<td>session 的名字</td>
+</tr>
+<tr>
+<td>#I</td>
+<td>window 的序号</td>
+</tr>
+<tr>
+<td>#W</td>
+<td>窗口的名字</td>
+</tr>
+</tbody>
+</table>
+<p>此外，我们还可以通过 <code>#(shell_cmd)</code> 的形式运行 shell 命令来增强显示。我们还可以通过<code>#{VARIABLE}</code> 的形式使用 TMUX 中的各种变量。</p>
+<ol>
+<li>条件变量，例如：<code>#{?session_attached,attached,not attached}</code>。如果 <code>?</code> 后面的变量存在并且非 0 则返回第一个变量，否则返回第二个。</li>
+<li>变量字符串截取 <code>#{=N:VARIABLE}</code> 的形式获取变量的前 N 个字符， <code>#{=-N:VARIABLE}</code>获取变量的后 N 个字符。</li>
+<li>如果变量是时间戳类型的，<code>#{t:VARIABLE}</code> 会把时间戳转换为时间字符串。</li>
+<li><code>#{d:VARIABLE}</code> 返回变量的 <code>dirname</code>，<code>#{d:VARIABLE}</code> 返回 <code>basename</code>。</li>
+</ol>
+<p>更多相关配置可见于：<a href="http://man.openbsd.org/OpenBSD-current/man1/tmux.1#FORMATS" target="_blank" rel="noopener">FORMATS</a></p>
+<h2 id="6-我的配置"><a href="#6-我的配置" class="headerlink" title="6. 我的配置"></a>6. 我的配置</h2><p>以下是我的配置，部分配置还是以 2.7 为准。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 修改快捷呼出键为Ctrl+a</span><br><span class="line">unbind ^b</span><br><span class="line">bind a send-prefix</span><br><span class="line"></span><br><span class="line">unbind &apos;&quot;&apos;</span><br><span class="line">bind - splitw -v # 分割成上下两个窗口</span><br><span class="line">unbind % </span><br><span class="line">bind | splitw -h # 分割成左右两个窗口</span><br><span class="line"></span><br><span class="line"># 绑定 R 重载配置文件</span><br><span class="line">bind R source-file ~/.tmux.conf</span><br><span class="line"></span><br><span class="line"># 采用 vi 模式</span><br><span class="line">setw -g mode-keys vi</span><br><span class="line"></span><br><span class="line"># 基本设置</span><br><span class="line">set -g default-terminal &quot;screen-256color&quot;</span><br><span class="line">setw -g utf8 on</span><br><span class="line">set -g status-utf8 on</span><br><span class="line"></span><br><span class="line"># 设定状态栏的位置</span><br><span class="line">set -g status-position bottom</span><br><span class="line"></span><br><span class="line"># 状态栏配置 &#123;</span><br><span class="line">    # 自动重新编号 window</span><br><span class="line">    set -g renumber-windows on</span><br><span class="line">    # 自动命名窗口打开</span><br><span class="line">    set-option -g allow-rename on</span><br><span class="line"></span><br><span class="line">    # 设置自动刷新的时间间隔</span><br><span class="line">    set -g status-interval 1</span><br><span class="line">    # 状态栏左对齐</span><br><span class="line">    set -g status-justify left</span><br><span class="line">    # 状态栏左侧宽度</span><br><span class="line">    set -g status-left-length 20</span><br><span class="line">    # 状态栏右侧宽度</span><br><span class="line">    set -g status-right-length 50</span><br><span class="line"></span><br><span class="line">    # 状态栏右侧显示时间</span><br><span class="line">    set -g status-right &apos;[#h] %Y-%m-%d %H:%M:%S&apos;</span><br><span class="line"># &#125;</span><br><span class="line"></span><br><span class="line"># tmux 控制相关的配置 &#123;</span><br><span class="line">    # 允许鼠标选取 Window 、Pane 以及 Pane 的大小改变，2.7 时使用如下设置</span><br><span class="line">    set -g mouse on</span><br><span class="line">    # 同上，1.6 时如下设置</span><br><span class="line">    #set -g mouse-select-window on</span><br><span class="line">    #set -g mouse-select-pane on</span><br><span class="line">    #set -g mouse-resize-pane on</span><br><span class="line"></span><br><span class="line">    # 切换为使用 Alt-方向键 切换同一 Window 中的pane</span><br><span class="line">    bind -n M-Left select-pane -L</span><br><span class="line">    bind -n M-Right select-pane -R</span><br><span class="line">    bind -n M-Up select-pane -U</span><br><span class="line">    bind -n M-Down select-pane -D</span><br><span class="line"># &#125;</span><br></pre></td></tr></table></figure>
+<p>每次学一个这样的高频度软件，都觉得开源世界真尼玛高深莫测，每个软件都有如此复杂的可定制性！还都是免费的！</p>
+<h2 id="7-参考资料"><a href="#7-参考资料" class="headerlink" title="7. 参考资料"></a>7. 参考资料</h2><ul>
+<li><a href="http://www.hamvocke.com/blog/a-guide-to-customizing-your-tmux-conf/" target="_blank" rel="noopener">Making tmux Pretty and Usable – A Guide to Customizing your tmux.conf</a></li>
+<li><a href="http://man.openbsd.org/OpenBSD-current/man1/tmux.1" target="_blank" rel="noopener">tmux</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhifeng xie</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://www.xiezhifeng.cn/archives/556ffe3c.html" title="tmux个人配置">http://www.xiezhifeng.cn/archives/556ffe3c.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tmux/" rel="tag"># tmux</a>
+          
+            <a href="/tags/tools/" rel="tag"># tools</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/9cec1625.html" rel="next" title="使用火焰图做性能分析">
+                <i class="fa fa-chevron-left"></i> 使用火焰图做性能分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/archives/fd942205.html" rel="prev" title="linux下性能诊断工具">
+                linux下性能诊断工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zhifeng xie</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">40</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/wisfern" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wisfern@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank" rel="external nofollow">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TMUX-自定义配置"><span class="nav-number">1.</span> <span class="nav-text">TMUX 自定义配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-自动加载配置文件"><span class="nav-number">1.1.</span> <span class="nav-text">1. 自动加载配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-采用-Vi-模式的快捷键"><span class="nav-number">1.2.</span> <span class="nav-text">2. 采用 Vi 模式的快捷键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-鼠标支持"><span class="nav-number">1.3.</span> <span class="nav-text">3. 鼠标支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-pane的快捷键"><span class="nav-number">1.4.</span> <span class="nav-text">4. pane的快捷键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-自定义状态栏"><span class="nav-number">1.5.</span> <span class="nav-text">5. 自定义状态栏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-关于时间的配置"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 关于时间的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-颜色配置"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 颜色配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-其他配置参数"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 其他配置参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-我的配置"><span class="nav-number">1.6.</span> <span class="nav-text">6. 我的配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-参考资料"><span class="nav-number">1.7.</span> <span class="nav-text">7. 参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhifeng xie</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=6.0.6"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=6.0.6"></script>
+
+
+  
+
+  
+
+</body>
+</html>

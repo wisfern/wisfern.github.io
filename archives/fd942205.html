@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.6" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.6">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.6">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.6" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.0.6',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在linux终端下工作无法像windows一下有熟悉的网络工具可以诊断或者查看网络问题或者说结果没有那么直观，因此收集了几款个人在linux下诊断Linux性能问题的工具，以防忘记到处查找。涉及到CPU、磁盘IO、网络IO、进程诊断等。">
+<meta name="keywords" content="trace,glances,net">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下性能诊断工具">
+<meta property="og:url" content="http://www.xiezhifeng.cn/archives/fd942205.html">
+<meta property="og:site_name" content="自留地">
+<meta property="og:description" content="在linux终端下工作无法像windows一下有熟悉的网络工具可以诊断或者查看网络问题或者说结果没有那么直观，因此收集了几款个人在linux下诊断Linux性能问题的工具，以防忘记到处查找。涉及到CPU、磁盘IO、网络IO、进程诊断等。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/glances.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/dstat.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/dstat-av.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/vmstat-2.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/top.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/sar.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/sar-1-10.gif">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/sar-ndev.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/netstat-tunlp.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/ss-s.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/ss-tunlp.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/netstat-ss.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/nethogs-eth0.gif">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/iostat-x-2.gif">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/linux-performance-observability-tools.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/linux-performance-observability-sar.png">
+<meta property="og:image" content="http://www.xiezhifeng.cn/archives/fd942205/linux-performance-benchmark-tools.png">
+<meta property="og:updated_time" content="2018-07-23T13:48:51.667Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下性能诊断工具">
+<meta name="twitter:description" content="在linux终端下工作无法像windows一下有熟悉的网络工具可以诊断或者查看网络问题或者说结果没有那么直观，因此收集了几款个人在linux下诊断Linux性能问题的工具，以防忘记到处查找。涉及到CPU、磁盘IO、网络IO、进程诊断等。">
+<meta name="twitter:image" content="http://www.xiezhifeng.cn/archives/fd942205/glances.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.xiezhifeng.cn/archives/fd942205.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>linux下性能诊断工具 | 自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.xiezhifeng.cn/archives/fd942205.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhifeng xie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">linux下性能诊断工具</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-13T18:01:23+00:00">2018-06-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/trace/" itemprop="url" rel="index"><span itemprop="name">trace</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在linux终端下工作无法像windows一下有熟悉的网络工具可以诊断或者查看网络问题或者说结果没有那么直观，因此收集了几款个人在linux下诊断Linux性能问题的工具，以防忘记到处查找。涉及到CPU、磁盘IO、网络IO、进程诊断等。<br><a id="more"></a></p>
+<h1 id="CPU性能"><a href="#CPU性能" class="headerlink" title="CPU性能"></a>CPU性能</h1><p>负载的话，一般使用top或者uptime，可以大概地看出一段时间内系统的CPU负载，主要指标是CPU等待中的进程数以及CPU占用运行中的进程数，一段时间内的负载数，最好不要超过CPU核心数。</p>
+<h2 id="glances"><a href="#glances" class="headerlink" title="glances"></a>glances</h2><p>这里把glances放在第一个讲，因为这个着实强大，几乎可以看到所有的性能数据，包含docker里面的镜像。它由<code>Python</code>编写，使用<code>psutil</code>库来从系统抓取信息的基于<code>curses</code>开发的跨平台命令行系统监视工具。 通过<code>Glances</code>，我们可以监视<code>CPU</code>，<code>平均负载，内存</code>，<code>网络流量</code>，<code>磁盘 I/O</code>，<code>其他处理器</code>和<code>文件系统</code>空间的利用情况。<br>一张运行截图：<br><img src="/archives/fd942205/glances.png" alt=""></p>
+<blockquote>
+<p>按<code>1</code>切换全局 CPU 使用情况和每个 CPU 的使用情况，按<code>i</code> 读写频率（I/O）对进程排序，按<code>m</code>则按内存占用率排序，按<code>c</code>则按cpu使用率排序。</p>
+</blockquote>
+<p>Glances 中颜色的含义</p>
+<ul>
+<li>绿色：OK（一切正常）</li>
+<li>蓝色：CAREFUL（需要注意）</li>
+<li>紫色：WARNING（警告）</li>
+<li>红色：CRITICAL（严重）</li>
+</ul>
+<p>另外，<code>glances -s/-c</code>可以监控远程计算机，<code>-s</code>设置为服务端，<code>-c -P xxx.xxx.xxx.xxx</code>客户端连接，更具体情况请参考man。</p>
+<h2 id="dstat-vmstat"><a href="#dstat-vmstat" class="headerlink" title="dstat/vmstat"></a>dstat/vmstat</h2><p><img src="/archives/fd942205/dstat.png" alt="dstat"></p>
+<blockquote>
+<p>上图可以很方便地看出cpu、磁盘、内存、网络、页面等性能数据，当然，要细化的话，还要再借用其他工具。<br>dstat默认使用了<code>-cdngy</code>参数，表示输出cpu\磁盘\网络\页面\系统状态，dstat工具的help信息，可以看出，还可以输出socket、tcp、平均负载等信息，如下：<br><code>dstat -av</code>按vmstat的格式输出<br><img src="/archives/fd942205/dstat-av.png" alt=""></p>
+</blockquote>
+<p><code>vmstat 2</code>每两秒输出一行数据<br><img src="/archives/fd942205/vmstat-2.png" alt=""></p>
+<h2 id="top-htop"><a href="#top-htop" class="headerlink" title="top/htop"></a>top/htop</h2><p>top，一般的Linux套件都自带，而htop则需要自己安装，在服务器上面的话，一般都只使用top，所以top还是要学习与掌握。<br>htop，由于有了glances之后，很少打开。<br><img src="/archives/fd942205/top.png" alt=""></p>
+<blockquote>
+<p>tips: 按1打开cpu核心视图，按u后输入用户名，只显示此用户名下的进程，按c显示完整的命令，按i的话，则按进程idle值进行排序，按F选择排序字段。</p>
+</blockquote>
+<h2 id="sar"><a href="#sar" class="headerlink" title="sar"></a>sar</h2><p>CPU使用率和I/O等待时间都是在不断变化的，可以通过sar 命令来确认这些指标。该工具包含在sysstat软件包内。<br>一张使用截图，显示过去一段时间的值列表:<br><img src="/archives/fd942205/sar.png" alt=""></p>
+<p>每秒输出统计值，连续10次，命令<code>sar 1 10</code>：<br><img src="/archives/fd942205/sar-1-10.gif" alt=""></p>
+<p>输出各网络端口的统计列值，每2秒输出一次共2次，命令：<code>sar -n DEV 2 2</code><br><img src="/archives/fd942205/sar-ndev.png" alt=""></p>
+<p>字段说明<br>IFACE：LAN接口<br>rxpck/s：每秒钟接收的数据包<br>txpck/s：每秒钟发送的数据包<br>rxbyt/s：每秒钟接收的字节数<br>txbyt/s：每秒钟发送的字节数<br>rxcmp/s：每秒钟接收的压缩数据包<br>txcmp/s：每秒钟发送的压缩数据包<br>rxmcst/s：每秒钟接收的多播数据包</p>
+<h1 id="网络性能工具"><a href="#网络性能工具" class="headerlink" title="网络性能工具"></a>网络性能工具</h1><p>一直以来，我也找不到方便使用的性能收集与统计工具，最主要的还属<code>netstat</code>，在<code>windows</code>下我使用的是360公司出的<code>GlassWire</code>，这是一款windows自带防火墙的GUI，可以很方便地看到网络连接、速率等信息，按主机、进程、用户等分组统计流量用量，进程版本更新等等功能，而在Linux我还没有找到替代软件。</p>
+<h2 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h2><p>几乎所有的Linux系统都会默认包含netstat命令，是net-tools工具集中的一员。</p>
+<p>常用显示监听端口与对应的进程号命令：<code>netstat -tunpl</code>(此命令-p要在root才能显示进程号，非root只显示本用户所打开的进程号)<br><img src="/archives/fd942205/netstat-tunlp.png" alt=""></p>
+<blockquote>
+<p>-u表示显示udp，-l表示只列出监听，-n表示只显示数字不需要对ip做dns处理</p>
+</blockquote>
+<p>另外，当服务器的连接非常大的时候，使用netstat就非常不方便了，这个时候就可以使用<code>ss</code>(Socket Statistics)命令替代<code>netstat</code>。</p>
+<h2 id="ss"><a href="#ss" class="headerlink" title="ss"></a>ss</h2><p>ss命令是iproute工具集中的一员，正好可以用来替代<code>netstat</code>，在这里有必要讲一下，iproute其实可以替代net-tools包了，如下表：</p>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>net-tool(淘汰)</th>
+<th>iproute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>地址和链路配置</td>
+<td>ifconfig</td>
+<td>ip addr, ip link</td>
+</tr>
+<tr>
+<td>路由表</td>
+<td>route</td>
+<td>ip route</td>
+</tr>
+<tr>
+<td>邻居</td>
+<td>arp</td>
+<td>ip neigh</td>
+</tr>
+<tr>
+<td>VLAN</td>
+<td>vconfig</td>
+<td>ip link</td>
+</tr>
+<tr>
+<td>隧道</td>
+<td>iptunnel</td>
+<td>ip tunnel</td>
+</tr>
+<tr>
+<td>组播</td>
+<td>ipmaddr</td>
+<td>ip maddr</td>
+</tr>
+<tr>
+<td>统计</td>
+<td>netstat</td>
+<td>ss</td>
+</tr>
+</tbody>
+</table>
+<h3 id="典型使用场景"><a href="#典型使用场景" class="headerlink" title="典型使用场景"></a>典型使用场景</h3><p>１、服务器连接统计，命令<code>ss -s</code></p>
+<p><img src="/archives/fd942205/ss-s.png" alt=""></p>
+<p>2、服务所有的tcp、udp监听，显示进程号，并以数字显示ip地址和端口，命令<code>ss -tunlp</code>,如果显示不够宽还是<code>netstat -tunlp</code>好看。<br><img src="/archives/fd942205/ss-tunlp.png" alt=""></p>
+<p>3、netstat与ss,ip命令的关系</p>
+<p><img src="/archives/fd942205/netstat-ss.png" alt=""></p>
+<h2 id="nethogs"><a href="#nethogs" class="headerlink" title="nethogs"></a>nethogs</h2><p>用此工具可以实时显示各个进程的网络连接，<a href="https://www.vpser.net/manage/nethogs.html" target="_blank" rel="noopener">nethogs</a>可以在这里看到更详细的教程，这里只记录简单的日常用法，以及截图。<br>使用例子: 监控eth0网卡<code>nethogs eth0</code><br><img src="/archives/fd942205/nethogs-eth0.gif" alt="nethogs-eth0"></p>
+<blockquote>
+<p>这东西，看起来比<code>iftop</code>好，这里就不介绍<code>iftop</code>，有兴趣再网上找资料学习。</p>
+</blockquote>
+<h1 id="磁盘IO"><a href="#磁盘IO" class="headerlink" title="磁盘IO"></a>磁盘IO</h1><h2 id="iostat"><a href="#iostat" class="headerlink" title="iostat"></a>iostat</h2><p>场景：查看各磁盘分区的io使用率，命令<code>iostat -x 2</code>，2表示，每两秒输出一次<br><img src="/archives/fd942205/iostat-x-2.gif" alt=""></p>
+<blockquote>
+<p>这个工具选项，我一般看最后一列的百分比，越接近100%越忙</p>
+</blockquote>
+<h1 id="三张神图"><a href="#三张神图" class="headerlink" title="三张神图"></a>三张神图</h1><p>网上有人总结了Linux性能工具大全的神图，把Linux性能的方方面面都包含在里面。如下</p>
+<p><img src="/archives/fd942205/linux-performance-observability-tools.png" alt=""><br><img src="/archives/fd942205/linux-performance-observability-sar.png" alt=""><br><img src="/archives/fd942205/linux-performance-benchmark-tools.png" alt=""></p>
+<h1 id="各种监控平台"><a href="#各种监控平台" class="headerlink" title="各种监控平台"></a>各种监控平台</h1><p>todo: 后补吧，手头上没有现成的。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhifeng xie</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://www.xiezhifeng.cn/archives/fd942205.html" title="linux下性能诊断工具">http://www.xiezhifeng.cn/archives/fd942205.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/trace/" rel="tag"># trace</a>
+          
+            <a href="/tags/glances/" rel="tag"># glances</a>
+          
+            <a href="/tags/net/" rel="tag"># net</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/556ffe3c.html" rel="next" title="tmux个人配置">
+                <i class="fa fa-chevron-left"></i> tmux个人配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/archives/2a929512.html" rel="prev" title="前端与网络性能测试工具">
+                前端与网络性能测试工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zhifeng xie</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">40</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/wisfern" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wisfern@gmail.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank" rel="external nofollow">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CPU性能"><span class="nav-number">1.</span> <span class="nav-text">CPU性能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#glances"><span class="nav-number">1.1.</span> <span class="nav-text">glances</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dstat-vmstat"><span class="nav-number">1.2.</span> <span class="nav-text">dstat/vmstat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#top-htop"><span class="nav-number">1.3.</span> <span class="nav-text">top/htop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sar"><span class="nav-number">1.4.</span> <span class="nav-text">sar</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络性能工具"><span class="nav-number">2.</span> <span class="nav-text">网络性能工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#netstat"><span class="nav-number">2.1.</span> <span class="nav-text">netstat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ss"><span class="nav-number">2.2.</span> <span class="nav-text">ss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#典型使用场景"><span class="nav-number">2.2.1.</span> <span class="nav-text">典型使用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nethogs"><span class="nav-number">2.3.</span> <span class="nav-text">nethogs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#磁盘IO"><span class="nav-number">3.</span> <span class="nav-text">磁盘IO</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iostat"><span class="nav-number">3.1.</span> <span class="nav-text">iostat</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三张神图"><span class="nav-number">4.</span> <span class="nav-text">三张神图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#各种监控平台"><span class="nav-number">5.</span> <span class="nav-text">各种监控平台</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhifeng xie</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.6"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.6"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.6"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.6"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.6"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=6.0.6"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=6.0.6"></script>
+
+
+  
+
+  
+
+</body>
+</html>
