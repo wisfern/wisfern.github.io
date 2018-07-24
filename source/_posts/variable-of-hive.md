@@ -212,3 +212,17 @@ set mapreduce.job.priority=VERY_HIGH;
 set mapred.job.queuename=queue_name;
 ```
 
+- *设置reduce数*
+
+```
+set mapred.reduce.tasks=20;
+```
+
+- *设置map分片参数，可以借此控制map数*
+
+```
+set mapred.min.split.size=1000000;
+set mapred.max.split.size=1000000;
+set mapred.min.split.size.per.node=1000000;
+set mapred.min.split.size.per.rack=1000000;
+```
