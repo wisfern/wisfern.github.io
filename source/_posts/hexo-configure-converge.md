@@ -79,6 +79,17 @@ Next主题由于我打开了fancybox特效，因此需要安装fancybox主题插
 git clone https://github.com/theme-next/theme-next-fancybox3 source/lib/fancybox
 ```
 
+安装post-wordcount插件
+
+```
+# Post wordcount display settings
+# Dependencies: https://github.com/willin/hexo-wordcount
+post_wordcount:
+  item_text: true
+  wordcount: true
+  min2read: true
+```
+
 参考资料：
 [Next主题配置文档](https://github.com/iissnan/hexo-theme-next/wiki/%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83)
 
@@ -98,6 +109,22 @@ npm install hexo-neat --save
 - Github大礼包：**gitment**， **gitalk（推荐），gitter（推荐）;** 三个都支持**Markdown；**
 - 基于leancloud的无后端评论系统：**Valine（推荐，**支持**Markdown）；**
 - 国外的有几个：**disqus**(漂亮，但需翻墙)，**hypercomments（推荐，**不支持**Markdown）.**
+
+## 搜索系统
+
+安装Hexo local search插件
+
+```shell
+$ npm install hexo-generator-searchdb --save
+
+# modify hexo _config.yml
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+# 也可以在next主题中打开local search功能
+```
 
 # 部署
 
@@ -241,6 +268,13 @@ image_minifier:
 Hexo博客可以有如下几种方式来优化SEO。
 ### 生成sitemap文件
 1、安装相关插件
+
+```
+hexo-generator-sitemap
+hexo-generator-baidu-sitemap
+```
+
+
 
 ### Url持久化
 hexo默认的url比较长，形如:year/:month/:day/:title/，对搜索不友好。

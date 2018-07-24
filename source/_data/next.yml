@@ -122,6 +122,7 @@ menu:
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
   about: /about/ || user
+  #education: /categories/education || cog
 
 # Enable/Disable menu icons / item badges.
 menu_settings:
@@ -688,12 +689,12 @@ algolia_search:
 # Local search
 # Dependencies: https://github.com/theme-next/hexo-generator-searchdb
 local_search:
-  enable: false
+  enable: true
   # if auto, trigger search by changing input
   # if manual, trigger search by pressing enter key or search button
   trigger: auto
   # show top n results per article, show all results by setting to -1
-  top_n_per_article: 1
+  top_n_per_article: -1
   # unescape html strings to the readable one
   unescape: false
 
@@ -948,6 +949,13 @@ vendors:
 css: css
 js: js
 images: images
+
+# Post wordcount display settings
+# Dependencies: https://github.com/willin/hexo-wordcount
+# post_wordcount:
+#   item_text: true
+#   wordcount: true
+#   min2read: true
 
 # Theme version
 version: 6.0.6
