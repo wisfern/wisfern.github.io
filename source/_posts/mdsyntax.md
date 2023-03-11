@@ -718,6 +718,10 @@ Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的�
 
 <h3 id="acknowledgement">感谢</h3>
 
+### 流程图
+
+`TODO`
+
 感谢 [leafy7382][] 协助翻译，[hlb][]、[Randylien][] 帮忙润稿，[ethantw][] 的[汉字标准格式・CSS Reset][]， [WM][] 回报文字错误。
 
 [leafy7382]:https://twitter.com/#!/leafy7382
